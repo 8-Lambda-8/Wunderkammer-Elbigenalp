@@ -1,13 +1,33 @@
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import pygame, sys, os
 import time
 import random
 from pygame.locals import *
-import moviepy
-from moviepy.editor import *
+#import moviepy
+#from moviepy.editor import *
 
 
-#GPIO.cleanup()
+GPIO.cleanup()
+#init GPIO
+Bilder = 0
+Zeitraffer = 1
+#2
+#3
+#4
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(Bilder, GPIO.IN)
+GPIO.setup(Zeitraffer, GPIO.IN)
+
+def InterruptBilder:
+	print("InterruptBilder")
+	
+def InterruptZeitraffer:
+	print("InterruptZeitraffer")
+
+GPIO.add_event_detect(Bilder, GPIO.RISING, callback = Interrupt, bouncetime = 200)
+GPIO.add_event_detect(Zeitraffer, GPIO.RISING, callback = Interrupt, bouncetime = 200)
+
 print ('')
 print ('')
 running = True
@@ -41,6 +61,7 @@ i = 0;
 
 pygame.display.set_caption('Wunderkammer')
 pygame.font.init()
+
 myfont = pygame.font.SysFont('Comic Sans MS', 30)
 
 mylist = os.listdir('Bilder/')
@@ -52,8 +73,10 @@ PosUsed = 16*[False]
 
 PicAtPos = [4*[""]for i in range(4)]
 SizeOfPicAtPos = [4*[[0,0,0,0]]for i in range(4)]
-	#xoffset ,yoffset, width, height
+#xoffset ,yoffset, width, height
 	
+#def checkEvents():
+#		if(e)
 
 def text_to_screen(screen, text, x, y, size = 50,
             color = (000, 000, 000), font_type = 'data/fonts/orecrusherexpand.ttf'):
@@ -71,7 +94,7 @@ def bildAufbau():
 		for y in range (4):
 			if PicAtPos[x][y] != "":
 				img = pygame.image.fromstring(PicAtPos[x][y],(SizeOfPicAtPos[x][y][2], SizeOfPicAtPos[x][y][3]),"RGB")
-				screen.blit(img,(480*x+SizeOfPicAtPos[x][y][0],270*y+SizeOfPicAtPos[x][y][1]))
+				screen.blit(img,(picW*x+SizeOfPicAtPos[x][y][0],picH*y+SizeOfPicAtPos[x][y][1]))
 			
 def posNrToXY(pos):
 	y=0
@@ -116,7 +139,7 @@ def fadeInPic():
 			screen.fill(BLACK)
 			bildAufbau()
 			imageA.set_alpha(i)
-			screen.blit(imageA,(x*480+SizeOfPicAtPos[x][y][0],y*270+SizeOfPicAtPos[x][y][1]))
+			screen.blit(imageA,(x*picW+SizeOfPicAtPos[x][y][0],y*picH+SizeOfPicAtPos[x][y][1]))
 			pygame.display.flip()
 			time.sleep(0.001)
 		
@@ -128,30 +151,25 @@ def fadeInPic():
 	xOffset = 0
 	yOffset = 0
 	
-	if (image.get_width()/image.get_height())==(16/9):
-		image = pygame.transform.scale(image, (480, 270))
-		SizeOfPicAtPos[x][y] = [0,0,480,270]
+	if (image.get_width()/image.get_height())==screenRatio:
+		image = pygame.transform.scale(image, (picW, picH))
+		SizeOfPicAtPos[x][y] = [0,0,picW,picH]
 		
-	elif (image.get_width()/image.get_height())==(9/16):
-		image = pygame.transform.scale(image, (152, 270))
-		xOffset = 164
-		SizeOfPicAtPos[x][y] = [xOffset,0,152,270]
+	elif (image.get_width()/image.get_height())>screenRatio:
+		h = int(picW/(image.get_width()/image.get_height()))
+		image = pygame.transform.scale(image, (picW, h))
+		yOffset = int((picH-h)/2)
+		SizeOfPicAtPos[x][y] = [0,yOffset,picW,h]
 		
-	elif (image.get_width()/image.get_height())>(16/9):
-		h = int(480/(image.get_width()/image.get_height()))
-		image = pygame.transform.scale(image, (480, h))
-		yOffset = int((270-h)/2)
-		SizeOfPicAtPos[x][y] = [0,yOffset,480,h]
-		
-	elif (image.get_width()/image.get_height())<(16/9):
-		w = int(270*(image.get_width()/image.get_height()))
-		image = pygame.transform.scale(image,(w, 270))
-		xOffset = int((480-w)/2)
-		SizeOfPicAtPos[x][y] = [xOffset,0,w,270]
+	elif (image.get_width()/image.get_height())<screenRatio:
+		w = int(picH*(image.get_width()/image.get_height()))
+		image = pygame.transform.scale(image,(w, picH))
+		xOffset = int((picW-w)/2)
+		SizeOfPicAtPos[x][y] = [xOffset,0,w,picH]
 		
 	else:
-		image = pygame.transform.scale(image, (480, 270))
-		SizeOfPicAtPos[x][y] = [0,0,480,270]		
+		image = pygame.transform.scale(image, (picW, picH))
+		SizeOfPicAtPos[x][y] = [0,0,480,picH]		
 		
 	print ('rand: '+str(rand))
 	print ('pos:  '+str(pos))
@@ -172,7 +190,7 @@ def fadeInPic():
 		screen.fill(BLACK)
 		bildAufbau()
 		imageA.set_alpha(i)
-		screen.blit(imageA,(x*480+xOffset,y*270+yOffset))
+		screen.blit(imageA,(x*picW+xOffset,y*picH+yOffset))
 		pygame.display.flip()
 		
 		time.sleep(0.001)
@@ -182,11 +200,10 @@ def fadeInPic():
 
 try:
 	while running:
-	
-		
+			
 		
 		while Timelapse:
-			clip = VideoFileClip('TIMELAPSE VID.xxx')
+			clip = VideoFileClip('ZeitrafferFilm.mp4')
 			clip.preview()
 		
 		while Pics:
@@ -200,7 +217,7 @@ try:
 			pygame.display.flip()
 			time.sleep(2)
 		
-		clip = VideoFileClip('fangstuhl_ORF.mp4')
+		clip = VideoFileClip('StartWunderbox.mp4')
 		clip.preview()
 		
 		
