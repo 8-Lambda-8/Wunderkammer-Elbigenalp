@@ -257,7 +257,7 @@ try:
 			#pygame.display.flip()
 			#time.sleep(2)
 			
-		playVideo("StartWunderbox.mp4")		
+		#playVideo("StartWunderbox.mp4")		
 		
 		
 except (KeyboardInterrupt, SystemExit):
