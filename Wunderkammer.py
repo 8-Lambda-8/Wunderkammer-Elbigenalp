@@ -247,7 +247,7 @@ try:
 			#p = subprocess.Popen(Pics())
 			
 			
-			#print ('')
+			print ('')
 			#print ('new')
 					
 			#bildAufbau()
