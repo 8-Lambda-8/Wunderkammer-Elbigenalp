@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import pygame, sys, os
 import subprocess
-import vlc
+#import vlc
 import time, random
 
 #import moviepy
@@ -217,21 +217,21 @@ def	Pics():
 		
 		Pics = False
 	
-def playVideo(movie):
-	
-	# Check if movie is accessible
-	if not os.access(movie, os.R_OK):
-		print('Error: %s file not readable' % movie)
-		#sys.exit(1)
-	
-	vlcInstance = vlc.Instance()
-	media = vlcInstance.media_new(movie)
-	
-	player = vlcInstance.media_player_new()
-	player.set_hwnd(pygame.display.get_wm_info()['window'])
-	player.set_media(media)
-	pygame.mixer.quit()
-	player.play()	
+#def playVideo(movie):
+#	
+#	# Check if movie is accessible
+#	if not os.access(movie, os.R_OK):
+#		print('Error: %s file not readable' % movie)
+#		#sys.exit(1)
+#	
+#	vlcInstance = vlc.Instance()
+#	media = vlcInstance.media_new(movie)
+#	
+#	player = vlcInstance.media_player_new()
+#	player.set_hwnd(pygame.display.get_wm_info()['window'])
+#	player.set_media(media)
+#	pygame.mixer.quit()
+#	player.play()	
 
 try:
 	while running:
