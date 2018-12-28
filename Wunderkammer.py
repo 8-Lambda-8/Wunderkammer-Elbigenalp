@@ -236,7 +236,7 @@ def playVideo(movie):
 try:
 	while running:
 	
-		GPIO.input(P):
+		print (GPIO.input(BTN_Pics))
  
 		
 		if Timelapse:
