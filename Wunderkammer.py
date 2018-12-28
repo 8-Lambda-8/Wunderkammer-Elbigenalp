@@ -2,9 +2,9 @@ import RPi.GPIO as GPIO
 import pygame, sys, os
 import time
 import random
-from pygame.locals import *
-#import moviepy
-#from moviepy.editor import *
+
+import moviepy
+from moviepy.editor import *
 
 
 GPIO.cleanup()
