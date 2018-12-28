@@ -1,37 +1,35 @@
 import RPi.GPIO as GPIO
-from gpiozero import Button
-
 import pygame, sys, os
 import subprocess
-#import vlc
+import pyglet
 import time, random
+from moviepy.editor import *
 
-#import moviepy
-#from moviepy.editor import *
-
-GPIO.cleanup()
 #init GPIO
-#BTN_Pics = Button(17)
+GPIO.cleanup()
 BTN_Pics = 17
-BTN_Timelapse = Button(18)
+BTN_Timelapse = 18
 #27
 #22
 #23
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(BTN_Pics, GPIO.IN)
-#GPIO.setup(BTN_Timelapse, GPIO.IN)
+GPIO.setup(BTN_Timelapse, GPIO.IN)
 
-def InterruptPics():
+def InterruptPics(x):
 	print("InterruptBilder")
-	Pics = True
+	#Pics = True
+	Pics()
 	
-def InterruptTimelapse():
+def InterruptTimelapse(x):
 	print("InterruptZeitraffer")
 	Timelapse = True
 
 GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
-#GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
+GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
+
+
 
 print ('')
 print ('')
@@ -48,8 +46,8 @@ WHITE = ( 230, 230, 230)
 pygame.display.init()
 infoObject = pygame.display.Info()
 
-w = 16*30#infoObject.current_w #1920
-h = 9*30#infoObject.current_h #1200
+w = 16*40#infoObject.current_w #1920
+h = 9*40#infoObject.current_h #1200
 
 print("w: "+str(w)+" h: "+str(h))
 
@@ -63,7 +61,6 @@ picH = int(h/colloms)
 
 print("picH: "+str(picH)+" picW: "+str(picW))
 pygame.display.init()
-#pygame.movie.init()
 screen = pygame.display.set_mode((w, h))#,pygame.FULLSCREEN)
 screen.fill((BLACK))
 
@@ -208,6 +205,7 @@ def fadeInPic():
 
 def	Pics():
 	for i in range(48):
+		print ("ImageNr: "+str(i))
 		pygame.mouse.set_visible(False)
 		
 		bildAufbau()
@@ -219,36 +217,18 @@ def	Pics():
 		
 		Pics = False
 	
-#def playVideo(movie):
-#	
-#	# Check if movie is accessible
-#	if not os.access(movie, os.R_OK):
-#		print('Error: %s file not readable' % movie)
-#		#sys.exit(1)
-#	
-#	vlcInstance = vlc.Instance()
-#	media = vlcInstance.media_new(movie)
-#	
-#	player = vlcInstance.media_player_new()
-#	player.set_hwnd(pygame.display.get_wm_info()['window'])
-#	player.set_media(media)
-#	pygame.mixer.quit()
-#	player.play()	
-
 try:
 	while running:
 	
 		#print (GPIO.input(BTN_Pics))
  
-		
 		if Timelapse:
 			clip = VideoFileClip('ZeitrafferFilm.mp4')
 			clip.preview()
 		
-		if Pics:
+		#if Pics:
 			#p = subprocess.Popen(Pics())
 			
-			x = 0
 			#print ('')
 			#print ('new')
 					
@@ -259,13 +239,12 @@ try:
 			#pygame.display.flip()
 			#time.sleep(2)
 			
-		#playVideo("StartWunderbox.mp4")		
+		clip = VideoFileClip('StartWunderbox.mp4')
+		clip.preview()
 		
 		
 except (KeyboardInterrupt, SystemExit):
-	#p1.stop()
-	#p2.stop()
 	running = False
-	#GPIO.cleanup()
+	GPIO.cleanup()
 	print('\nQuit\n')
 	pygame.quit()
