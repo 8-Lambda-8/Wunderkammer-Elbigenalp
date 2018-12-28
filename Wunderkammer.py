@@ -40,6 +40,7 @@ BTN_Pics = 2
 BLACK = ( 0, 0, 0)
 WHITE = ( 230, 230, 230)
 
+pygame.display.init()
 infoObject = pygame.display.Info()
 
 w = infoObject.current_w #1920
