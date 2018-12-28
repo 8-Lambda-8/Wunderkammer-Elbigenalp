@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import pygame, sys, os
-import subprocess, vlc
+import subprocess
+import vlc
 import time, random
 
 #import moviepy
@@ -9,15 +10,15 @@ import time, random
 
 GPIO.cleanup()
 #init GPIO
-Pics = 0
-Timelapse = 1
+BTN_Pics = 0
+BTN_Timelapse = 1
 #2
 #3
 #4
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(Pics, GPIO.IN)
-GPIO.setup(Timelapse, GPIO.IN)
+GPIO.setup(BTN_Pics, GPIO.IN)
+GPIO.setup(BTN_Timelapse, GPIO.IN)
 
 def InterruptPics():
 	print("InterruptBilder")
@@ -27,8 +28,8 @@ def InterruptTimelapse():
 	print("InterruptZeitraffer")
 	Timelapse = True
 
-GPIO.add_event_detect(Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
-GPIO.add_event_detect(Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
+GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
+GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
 
 print ('')
 print ('')
@@ -45,8 +46,8 @@ WHITE = ( 230, 230, 230)
 pygame.display.init()
 infoObject = pygame.display.Info()
 
-w = 420#infoObject.current_w #1920
-h = 360#infoObject.current_h #1200
+w = 16*30#infoObject.current_w #1920
+h = 9*30#infoObject.current_h #1200
 
 print("w: "+str(w)+" h: "+str(h))
 
@@ -213,6 +214,8 @@ def	Pics():
 		fadeInPic()
 		pygame.display.flip()
 		time.sleep(Delay)
+		
+		Pics = False
 	
 def playVideo(movie):
 	
@@ -232,6 +235,9 @@ def playVideo(movie):
 
 try:
 	while running:
+	
+		GPIO.input(P):
+ 
 		
 		if Timelapse:
 			clip = VideoFileClip('ZeitrafferFilm.mp4')
@@ -239,7 +245,7 @@ try:
 		
 		if Pics:
 			#p = subprocess.Popen(Pics())
-			Pics = False
+			
 			
 			#print ('')
 			#print ('new')
@@ -250,9 +256,8 @@ try:
 			#fadeInPic()
 			#pygame.display.flip()
 			#time.sleep(2)
-		playVideo("StartWunderbox.mp4")
-		
-		
+			
+		playVideo("StartWunderbox.mp4")		
 		
 		
 except (KeyboardInterrupt, SystemExit):
