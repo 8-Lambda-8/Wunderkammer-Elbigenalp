@@ -3,8 +3,8 @@ import pygame, sys, os
 import time
 import random
 
-import moviepy
-from moviepy.editor import *
+#import moviepy
+#from moviepy.editor import *
 
 
 GPIO.cleanup()
@@ -31,7 +31,7 @@ GPIO.add_event_detect(Zeitraffer, GPIO.RISING, callback = InterruptZeitraffer, b
 print ('')
 print ('')
 running = True
-Pics = False
+Pics = True#False
 Timelapse = False
 
 BTN_Timelapse = 1
@@ -222,8 +222,8 @@ try:
 			pygame.display.flip()
 			time.sleep(2)
 		
-		clip = VideoFileClip('StartWunderbox.mp4')
-		clip.preview()
+		#clip = VideoFileClip('StartWunderbox.mp4')
+		#clip.preview()
 		
 		
 except (KeyboardInterrupt, SystemExit):
