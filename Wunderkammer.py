@@ -56,7 +56,7 @@ picH = int(h/colloms)
 print("picH: "+str(picH)+" picW: "+str(picW))
 pygame.display.init()
 #pygame.movie.init()
-screen = pygame.display.set_mode((w, h)),pygame.FULLSCREEN)
+screen = pygame.display.set_mode((w, h),pygame.FULLSCREEN)
 screen.fill((BLACK))
 
 i = 0;
