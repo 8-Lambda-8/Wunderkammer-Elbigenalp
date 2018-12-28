@@ -1,4 +1,6 @@
 import RPi.GPIO as GPIO
+from gpiozero import Button
+
 import pygame, sys, os
 import subprocess
 #import vlc
@@ -7,18 +9,17 @@ import time, random
 #import moviepy
 #from moviepy.editor import *
 
-
 GPIO.cleanup()
 #init GPIO
-BTN_Pics = 0
-BTN_Timelapse = 1
-#2
-#3
-#4
+BTN_Pics = Button(17)
+BTN_Timelapse = Button(18)
+#27
+#22
+#23
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(BTN_Pics, GPIO.IN)
-GPIO.setup(BTN_Timelapse, GPIO.IN)
+GPIO.setup(17, GPIO.IN)
+#GPIO.setup(BTN_Timelapse, GPIO.IN)
 
 def InterruptPics():
 	print("InterruptBilder")
@@ -28,8 +29,8 @@ def InterruptTimelapse():
 	print("InterruptZeitraffer")
 	Timelapse = True
 
-GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
-GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
+GPIO.add_event_detect(17, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
+#GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
 
 print ('')
 print ('')
@@ -236,7 +237,7 @@ def	Pics():
 try:
 	while running:
 	
-		print (GPIO.input(BTN_Pics))
+		#print (GPIO.input(BTN_Pics))
  
 		
 		if Timelapse:
