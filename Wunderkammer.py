@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 import pygame, sys, os
 import subprocess
-import pyglet
 import time, random
 from moviepy.editor import *
 
