@@ -19,10 +19,10 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(Bilder, GPIO.IN)
 GPIO.setup(Zeitraffer, GPIO.IN)
 
-def InterruptBilder:
+def InterruptBilder():
 	print("InterruptBilder")
 	
-def InterruptZeitraffer:
+def InterruptZeitraffer():
 	print("InterruptZeitraffer")
 
 GPIO.add_event_detect(Bilder, GPIO.RISING, callback = InterruptBilder, bouncetime = 200)
