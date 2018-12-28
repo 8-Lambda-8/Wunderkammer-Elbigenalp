@@ -11,7 +11,7 @@ from moviepy.editor import *
 print ('')
 print ('')
 running = True
-Pics = True#False
+Pics = False
 Timelapse = False
 
 BTN_Timelapse = 1
@@ -21,7 +21,17 @@ BLACK = ( 0, 0, 0)
 WHITE = ( 230, 230, 230)
 
 w = 1920
-h = 1080
+h = 1200
+
+screenRatio = w/h
+
+colloms = 4
+rows	= 4
+
+picW = int(w/rows)
+picH = int(h/colloms)
+
+print("picH: "+str(picH)+" picW: "+str(picW))
 pygame.display.init()
 #pygame.movie.init()
 screen = pygame.display.set_mode((w, h))#,pygame.NOFRAME)#,pygame.FULLSCREEN)
