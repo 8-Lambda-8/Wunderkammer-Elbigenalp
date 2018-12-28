@@ -239,7 +239,7 @@ try:
 			clip.preview()
 		
 		if Pics:
-			p = subprocess.Popen(Pics())
+			#p = subprocess.Popen(Pics())
 			Pics = False
 			
 			#print ('')
@@ -251,7 +251,7 @@ try:
 			#fadeInPic()
 			#pygame.display.flip()
 			#time.sleep(2)
-		
+		playVideo(StartWunderbox)
 		
 		
 		
