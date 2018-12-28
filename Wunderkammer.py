@@ -239,8 +239,8 @@ try:
 			#pygame.display.flip()
 			#time.sleep(2)
 			
-		clip = VideoFileClip('StartWunderbox.mp4')
-		clip.preview()
+	clip = VideoFileClip('StartWunderbox.mp4')
+	clip.preview()
 		
 		
 except (KeyboardInterrupt, SystemExit):
