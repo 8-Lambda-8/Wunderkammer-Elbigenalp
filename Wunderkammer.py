@@ -84,16 +84,16 @@ PicAtPos = [4*[""]for i in range(4)]
 SizeOfPicAtPos = [4*[[0,0,0,0]]for i in range(4)]
 
 
-def text_to_screen(screen, text, x, y, size = 50,
-            color = (000, 000, 000), font_type = 'data/fonts/orecrusherexpand.ttf'):
-    try:
-        text = str(text)
-        font = pygame.font.Font(font_type, size)
-        text = font.render(text, True, color)
-        screen.blit(text, (x, y))
-
-    except Exception:
-        print ('Font Error, saw it coming')
+#def text_to_screen(screen, text, x, y, size = 50,
+#           color = (000, 000, 000), font_type = 'data/fonts/orecrusherexpand.ttf'):
+#    try:
+#        text = str(text)
+#        font = pygame.font.Font(font_type, size)
+#        text = font.render(text, True, color)
+#        screen.blit(text, (x, y))
+#
+#    except Exception:
+#        print ('Font Error, saw it coming')
         		
 def bildAufbau():
 	for x in range(4):
@@ -246,8 +246,8 @@ try:
 		if Pics:
 			#p = subprocess.Popen(Pics())
 			
-			
-			print ('')
+			x = 0
+			#print ('')
 			#print ('new')
 					
 			#bildAufbau()
