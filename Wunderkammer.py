@@ -11,14 +11,15 @@ import time, random
 
 GPIO.cleanup()
 #init GPIO
-BTN_Pics = Button(17)
+#BTN_Pics = Button(17)
+BTN_Pics = 17
 BTN_Timelapse = Button(18)
 #27
 #22
 #23
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(17, GPIO.IN)
+GPIO.setup(BTN_Pics, GPIO.IN)
 #GPIO.setup(BTN_Timelapse, GPIO.IN)
 
 def InterruptPics():
@@ -29,7 +30,7 @@ def InterruptTimelapse():
 	print("InterruptZeitraffer")
 	Timelapse = True
 
-GPIO.add_event_detect(17, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
+GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
 #GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
 
 print ('')
