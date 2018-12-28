@@ -21,9 +21,11 @@ GPIO.setup(Timelapse, GPIO.IN)
 
 def InterruptPics():
 	print("InterruptBilder")
+	Pics = True
 	
 def InterruptTimelapse():
 	print("InterruptZeitraffer")
+	Timelapse = True
 
 GPIO.add_event_detect(Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
 GPIO.add_event_detect(Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
@@ -31,7 +33,7 @@ GPIO.add_event_detect(Timelapse, GPIO.RISING, callback = InterruptTimelapse, bou
 print ('')
 print ('')
 running = True
-Pics = True#False
+Pics = False
 Timelapse = False
 
 fadeDelay = 0.001
@@ -66,6 +68,7 @@ i = 0;
 
 pygame.display.set_caption('Wunderkammer')
 pygame.font.init()
+pygame.mouse.set_visible(False)
 
 myfont = pygame.font.SysFont('Comic Sans MS', 30)
 
@@ -78,10 +81,7 @@ PosUsed = 16*[False]
 
 PicAtPos = [4*[""]for i in range(4)]
 SizeOfPicAtPos = [4*[[0,0,0,0]]for i in range(4)]
-#xoffset ,yoffset, width, height
-	
-#def checkEvents():
-#		if(e)
+
 
 def text_to_screen(screen, text, x, y, size = 50,
             color = (000, 000, 000), font_type = 'data/fonts/orecrusherexpand.ttf'):
@@ -203,7 +203,6 @@ def fadeInPic():
 	PicAtPos[x][y] = pygame.image.tostring(image,"RGB")
 	pygame.display.flip()#pygame.display.update(Rect(x*480+xOffset, y*270+yOffset, 480, 270))
 
-	
 def	Pics():
 	for i in range(48):
 		pygame.mouse.set_visible(False)
@@ -215,6 +214,22 @@ def	Pics():
 		pygame.display.flip()
 		time.sleep(Delay)
 	
+def playVideo(movie):
+	
+	# Check if movie is accessible
+	if not os.access(movie, os.R_OK):
+		print('Error: %s file not readable' % movie)
+		#sys.exit(1)
+	
+	vlcInstance = vlc.Instance()
+	media = vlcInstance.media_new(movie)
+	
+	player = vlcInstance.media_player_new()
+	player.set_hwnd(pygame.display.get_wm_info()['window'])
+	player.set_media(media)
+	pygame.mixer.quit()
+	player.play()	
+
 try:
 	while running:
 		
@@ -223,12 +238,12 @@ try:
 			clip.preview()
 		
 		if Pics:
-			Pics()
+			p = subprocess.Popen(Pics())
+			Pics = False
+			
 			#print ('')
 			#print ('new')
-			
-			#pygame.mouse.set_visible(False)
-			
+					
 			#bildAufbau()
 			#pygame.display.flip()
 			
@@ -236,13 +251,13 @@ try:
 			#pygame.display.flip()
 			#time.sleep(2)
 		
-		#clip = VideoFileClip('StartWunderbox.mp4')
-		#clip.preview()
+		
+		
 		
 		
 except (KeyboardInterrupt, SystemExit):
-	p1.stop()
-	p2.stop()
+	#p1.stop()
+	#p2.stop()
 	running = False
 	#GPIO.cleanup()
 	print('\nQuit\n')
