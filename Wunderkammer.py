@@ -251,7 +251,7 @@ try:
 			#fadeInPic()
 			#pygame.display.flip()
 			#time.sleep(2)
-		playVideo(StartWunderbox)
+		playVideo("StartWunderbox.mp4")
 		
 		
 		
