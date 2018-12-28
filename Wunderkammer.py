@@ -9,8 +9,8 @@ import random
 
 GPIO.cleanup()
 #init GPIO
-Bilder = 0
-Zeitraffer = 1
+Pics = 0
+Timelapse = 1
 #2
 #3
 #4
@@ -19,14 +19,14 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(Bilder, GPIO.IN)
 GPIO.setup(Zeitraffer, GPIO.IN)
 
-def InterruptBilder():
+def InterruptPics():
 	print("InterruptBilder")
 	
-def InterruptZeitraffer():
+def InterruptTimelapse():
 	print("InterruptZeitraffer")
 
-GPIO.add_event_detect(Bilder, GPIO.RISING, callback = InterruptBilder, bouncetime = 200)
-GPIO.add_event_detect(Zeitraffer, GPIO.RISING, callback = InterruptZeitraffer, bouncetime = 200)
+GPIO.add_event_detect(Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
+GPIO.add_event_detect(Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
 
 print ('')
 print ('')
@@ -34,8 +34,8 @@ running = True
 Pics = True#False
 Timelapse = False
 
-BTN_Timelapse = 1
-BTN_Pics = 2
+fadeDelay = 0.001
+Delay = 2
 
 BLACK = ( 0, 0, 0)
 WHITE = ( 230, 230, 230)
@@ -43,8 +43,8 @@ WHITE = ( 230, 230, 230)
 pygame.display.init()
 infoObject = pygame.display.Info()
 
-w = infoObject.current_w #1920
-h = infoObject.current_h #1200
+w = 420#infoObject.current_w #1920
+h = 360#infoObject.current_h #1200
 
 print("w: "+str(w)+" h: "+str(h))
 
@@ -59,7 +59,7 @@ picH = int(h/colloms)
 print("picH: "+str(picH)+" picW: "+str(picW))
 pygame.display.init()
 #pygame.movie.init()
-screen = pygame.display.set_mode((w, h),pygame.FULLSCREEN)
+screen = pygame.display.set_mode((w, h))#,pygame.FULLSCREEN)
 screen.fill((BLACK))
 
 i = 0;
@@ -146,7 +146,7 @@ def fadeInPic():
 			imageA.set_alpha(i)
 			screen.blit(imageA,(x*picW+SizeOfPicAtPos[x][y][0],y*picH+SizeOfPicAtPos[x][y][1]))
 			pygame.display.flip()
-			time.sleep(0.001)
+			time.sleep(fadeDelay)
 		
 	print('FadeIn')
 	
@@ -174,7 +174,7 @@ def fadeInPic():
 		
 	else:
 		image = pygame.transform.scale(image, (picW, picH))
-		SizeOfPicAtPos[x][y] = [0,0,480,picH]		
+		SizeOfPicAtPos[x][y] = [0,0,picW,picH]		
 		
 	print ('rand: '+str(rand))
 	print ('pos:  '+str(pos))
@@ -198,29 +198,43 @@ def fadeInPic():
 		screen.blit(imageA,(x*picW+xOffset,y*picH+yOffset))
 		pygame.display.flip()
 		
-		time.sleep(0.001)
+		time.sleep(fadeDelay)
 		 
 	PicAtPos[x][y] = pygame.image.tostring(image,"RGB")
 	pygame.display.flip()#pygame.display.update(Rect(x*480+xOffset, y*270+yOffset, 480, 270))
 
+	
+def	Pics():
+	for i in range(48):
+		pygame.mouse.set_visible(False)
+		
+		bildAufbau()
+		pygame.display.flip()
+		
+		fadeInPic()
+		pygame.display.flip()
+		time.sleep(Delay)
+	
 try:
 	while running:
-			
 		
-		while Timelapse:
+		if Timelapse:
 			clip = VideoFileClip('ZeitrafferFilm.mp4')
 			clip.preview()
 		
-		while Pics:
-			print ('')
-			print ('new')
+		if Pics:
+			Pics()
+			#print ('')
+			#print ('new')
 			
-			bildAufbau()
-			pygame.display.flip()
+			#pygame.mouse.set_visible(False)
 			
-			fadeInPic()
-			pygame.display.flip()
-			time.sleep(2)
+			#bildAufbau()
+			#pygame.display.flip()
+			
+			#fadeInPic()
+			#pygame.display.flip()
+			#time.sleep(2)
 		
 		#clip = VideoFileClip('StartWunderbox.mp4')
 		#clip.preview()
