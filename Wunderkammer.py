@@ -16,8 +16,8 @@ Timelapse = 1
 #4
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(Bilder, GPIO.IN)
-GPIO.setup(Zeitraffer, GPIO.IN)
+GPIO.setup(Pics, GPIO.IN)
+GPIO.setup(Timelapse, GPIO.IN)
 
 def InterruptPics():
 	print("InterruptBilder")
