@@ -23,7 +23,9 @@ def InterruptPics(x):
 	
 def InterruptTimelapse(x):
 	print("InterruptZeitraffer")
-	Timelapse = True
+	#Timelapse = True
+	clip = VideoFileClip('ZeitrafferFilm.mp4')
+	clip.preview()
 
 GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
 GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
@@ -37,7 +39,7 @@ Pics = False
 Timelapse = False
 
 fadeDelay = 0.001
-Delay = 2
+Delay = 1.5
 
 BLACK = ( 0, 0, 0)
 WHITE = ( 230, 230, 230)
@@ -46,7 +48,7 @@ pygame.display.init()
 infoObject = pygame.display.Info()
 
 w = 16*40#infoObject.current_w #1920
-h = 9*40#infoObject.current_h #1200
+h = 10*40#infoObject.current_h #1200
 
 print("w: "+str(w)+" h: "+str(h))
 
@@ -54,6 +56,8 @@ screenRatio = w/h
 
 colloms = 4
 rows	= 4
+
+numberPicsShown = 48
 
 picW = int(w/rows)
 picH = int(h/colloms)
@@ -66,7 +70,6 @@ screen.fill((BLACK))
 i = 0;
 
 pygame.display.set_caption('Wunderkammer')
-pygame.font.init()
 pygame.mouse.set_visible(False)
 
 myfont = pygame.font.SysFont('Comic Sans MS', 30)
@@ -203,10 +206,11 @@ def fadeInPic():
 	pygame.display.flip()#pygame.display.update(Rect(x*480+xOffset, y*270+yOffset, 480, 270))
 
 def	Pics():
-	for i in range(48):
+	if cnt<numberPicsShown
+	numberPicsShown = cnt
+	for i in range(numberPicsShown-1):
 		print ("ImageNr: "+str(i))
-		pygame.mouse.set_visible(False)
-		
+				
 		bildAufbau()
 		pygame.display.flip()
 		
@@ -221,9 +225,8 @@ try:
 	
 		#print (GPIO.input(BTN_Pics))
  
-		if Timelapse:
-			clip = VideoFileClip('ZeitrafferFilm.mp4')
-			clip.preview()
+		#if Timelapse:
+			
 		
 		#if Pics:
 			#p = subprocess.Popen(Pics())
