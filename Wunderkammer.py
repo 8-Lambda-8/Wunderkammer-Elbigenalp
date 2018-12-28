@@ -25,8 +25,8 @@ def InterruptBilder:
 def InterruptZeitraffer:
 	print("InterruptZeitraffer")
 
-GPIO.add_event_detect(Bilder, GPIO.RISING, callback = Interrupt, bouncetime = 200)
-GPIO.add_event_detect(Zeitraffer, GPIO.RISING, callback = Interrupt, bouncetime = 200)
+GPIO.add_event_detect(Bilder, GPIO.RISING, callback = InterruptBilder, bouncetime = 200)
+GPIO.add_event_detect(Zeitraffer, GPIO.RISING, callback = InterruptZeitraffer, bouncetime = 200)
 
 print ('')
 print ('')
@@ -40,8 +40,10 @@ BTN_Pics = 2
 BLACK = ( 0, 0, 0)
 WHITE = ( 230, 230, 230)
 
-w = 1920
-h = 1200
+w = pygame.display.Info().current_w#1920
+h = pygame.display.Info().current_h#1200
+
+print("w: "+str(w)+" h: "+str(h))
 
 screenRatio = w/h
 
@@ -54,7 +56,7 @@ picH = int(h/colloms)
 print("picH: "+str(picH)+" picW: "+str(picW))
 pygame.display.init()
 #pygame.movie.init()
-screen = pygame.display.set_mode((w, h))#,pygame.NOFRAME)#,pygame.FULLSCREEN)
+screen = pygame.display.set_mode((w, h)),pygame.FULLSCREEN)
 screen.fill((BLACK))
 
 i = 0;
