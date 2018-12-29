@@ -207,7 +207,7 @@ def fadeInPic():
 
 def	Pics():
 	if cnt<numberPicsShown:
-	numberPicsShown = cnt
+		numberPicsShown = cnt
 	for i in range(numberPicsShown-1):
 		print ("ImageNr: "+str(i))
 				
