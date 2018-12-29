@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import pygame, sys, os
-import subprocess
+import vlc
 import time, random
 from moviepy.editor import *
 
