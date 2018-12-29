@@ -18,19 +18,17 @@ GPIO.setup(BTN_Timelapse, GPIO.IN)
 
 def InterruptPics(x):
 	print("InterruptBilder")
-	#Pics = True
+	player.stop()
 	Pics()
 	
 def InterruptTimelapse(x):
 	print("InterruptZeitraffer")
-	#Timelapse = True
-	clip = VideoFileClip('ZeitrafferFilm.mp4')
-	clip.preview()
+	player.stop()
+	player.set_media(media_Timelapse)
+	player.play()
 
 GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
 GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
-
-
 
 print ('')
 print ('')
@@ -72,7 +70,16 @@ i = 0;
 pygame.display.set_caption('Wunderkammer')
 pygame.mouse.set_visible(False)
 
-myfont = pygame.font.SysFont('Comic Sans MS', 30)
+vlcInstance = vlc.Instance()
+player = vlcInstance.media_player_new()
+player.toggle_fullscreen()
+
+pygame.mixer.quit()
+
+
+media_WunderBox = vlcInstance.media_new("StartWunderbox.mp4")
+media_Timelapse = vlcInstance.media_new("ZeitrafferFilm.mp4")
+
 
 mylist = os.listdir('Bilder/')
 cnt = len(mylist)
@@ -84,17 +91,6 @@ PosUsed = 16*[False]
 PicAtPos = [4*[""]for i in range(4)]
 SizeOfPicAtPos = [4*[[0,0,0,0]]for i in range(4)]
 
-
-#def text_to_screen(screen, text, x, y, size = 50,
-#           color = (000, 000, 000), font_type = 'data/fonts/orecrusherexpand.ttf'):
-#    try:
-#        text = str(text)
-#        font = pygame.font.Font(font_type, size)
-#        text = font.render(text, True, color)
-#        screen.blit(text, (x, y))
-#
-#    except Exception:
-#        print ('Font Error, saw it coming')
         		
 def bildAufbau():
 	for x in range(4):
@@ -226,8 +222,7 @@ try:
 		#print (GPIO.input(BTN_Pics))
  
 		#if Timelapse:
-			
-		
+					
 		#if Pics:
 			#p = subprocess.Popen(Pics())
 			
@@ -241,8 +236,8 @@ try:
 			#pygame.display.flip()
 			#time.sleep(2)
 			
-		clip = VideoFileClip('StartWunderbox.mp4')
-		clip.preview()
+		player.set_media(media_WunderBox)
+		player.play()
 		
 		
 except (KeyboardInterrupt, SystemExit):
