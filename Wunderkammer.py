@@ -206,7 +206,7 @@ def fadeInPic():
 	pygame.display.flip()#pygame.display.update(Rect(x*480+xOffset, y*270+yOffset, 480, 270))
 
 def	Pics():
-	if cnt<numberPicsShown
+	if cnt<numberPicsShown:
 	numberPicsShown = cnt
 	for i in range(numberPicsShown-1):
 		print ("ImageNr: "+str(i))
