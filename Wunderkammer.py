@@ -150,7 +150,7 @@ def fadeInPic():
 	print('FadeIn')
 	
 	image = pygame.image.load('Bilder/'+mylist[rand]).convert()
-	print('size: '+str(image.get_size()))
+	#print('size: '+str(image.get_size()))
 	
 	xOffset = 0
 	yOffset = 0
@@ -182,8 +182,8 @@ def fadeInPic():
 	PosUsed[pos] = True
 		
 	print(mylist[rand])
-	print("x"+str(x))
-	print("y"+str(y))
+	#print("x"+str(x))
+	#print("y"+str(y))
 	
 	#pygame.display.flip()
 	imageA = image
@@ -207,6 +207,7 @@ def	Pics():
 	if cnt<numberPicsShown_:
 		numberPicsShown_ = cnt
 	for i in range(numberPicsShown_-1):
+		print ("")
 		print ("ImageNr: "+str(i))
 				
 		bildAufbau()
