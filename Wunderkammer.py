@@ -61,7 +61,6 @@ picW = int(w/rows)
 picH = int(h/colloms)
 
 print("picH: "+str(picH)+" picW: "+str(picW))
-pygame.display.init()
 screen = pygame.display.set_mode((w, h))#,pygame.FULLSCREEN)
 screen.fill((BLACK))
 
@@ -218,6 +217,7 @@ def	Pics():
 		time.sleep(Delay)
 		
 		Pics = False
+	screen.fill((BLACK))
 	
 try:
 
