@@ -20,12 +20,14 @@ def InterruptPics(x):
 	print("InterruptBilder")
 	player.stop()
 	Pics()
+	StartWunderbox()
 	
 def InterruptTimelapse(x):
 	print("InterruptZeitraffer")
 	player.stop()
 	player.set_media(media_Timelapse)
 	player.play()
+	StartWunderbox()
 
 GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
 GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
@@ -61,7 +63,7 @@ picW = int(w/rows)
 picH = int(h/colloms)
 
 print("picH: "+str(picH)+" picW: "+str(picW))
-screen = pygame.display.set_mode((w, h))#,pygame.FULLSCREEN)
+screen = pygame.display.set_mode((w, h),pygame.FULLSCREEN)
 screen.fill((BLACK))
 
 i = 0;
@@ -73,7 +75,7 @@ vlcInstance = vlc.Instance()
 player = vlcInstance.media_player_new()
 #player.set_hwnd(pygame.display.get_wm_info()['window'])
 #player.set_hwnd(screen.get_wm_info()['window'])
-player.toggle_fullscreen()
+piplayer.toggle_fullscreen()
 
 pygame.mixer.quit()
 
@@ -217,11 +219,17 @@ def	Pics():
 		pygame.display.flip()
 		time.sleep(Delay)
 		
-		Pics = False
-	screen.fill((BLACK))
+		Pics = False	
+	
+def StartWunderbox():
+	screen.fill(BLACK)
+	PicAtPos = [4*[""]for i in range(4)]
+	SizeOfPicAtPos = [4*[[0,0,0,0]]for i in range(4)]
 	player.set_media(media_WunderBox)
 	player.play()
-	
+	player.set_playback_mode(vlc.PlaybackMode.loop)
+
+
 try:
 
 	player.set_media(media_WunderBox)
