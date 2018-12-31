@@ -71,7 +71,8 @@ pygame.mouse.set_visible(False)
 
 vlcInstance = vlc.Instance()
 player = vlcInstance.media_player_new()
-player.set_hwnd(pygame.display.get_wm_info()['window'])
+#player.set_hwnd(pygame.display.get_wm_info()['window'])
+player.set_hwnd(screen)
 #player.toggle_fullscreen()
 
 pygame.mixer.quit()
@@ -218,6 +219,8 @@ def	Pics():
 		
 		Pics = False
 	screen.fill((BLACK))
+	player.set_media(media_WunderBox)
+	player.play()
 	
 try:
 
