@@ -26,6 +26,7 @@ def InterruptTimelapse(x):
 	print("InterruptZeitraffer")
 	player.stop()
 	player.set_media(media_Timelapse)
+	player.set_playback_mode(vlc.PlaybackMode.default)
 	player.play()
 	StartWunderbox()
 
@@ -226,8 +227,9 @@ def StartWunderbox():
 	PicAtPos = [4*[""]for i in range(4)]
 	SizeOfPicAtPos = [4*[[0,0,0,0]]for i in range(4)]
 	player.set_media(media_WunderBox)
-	player.play()
 	player.set_playback_mode(vlc.PlaybackMode.loop)
+	player.play()
+	
 
 
 try:
