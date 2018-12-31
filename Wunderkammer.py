@@ -72,7 +72,7 @@ pygame.mouse.set_visible(False)
 vlcInstance = vlc.Instance()
 player = vlcInstance.media_player_new()
 #player.set_hwnd(pygame.display.get_wm_info()['window'])
-player.set_hwnd(screen.get_wm_info()['window'])
+#player.set_hwnd(screen.get_wm_info()['window'])
 #player.toggle_fullscreen()
 
 pygame.mixer.quit()
