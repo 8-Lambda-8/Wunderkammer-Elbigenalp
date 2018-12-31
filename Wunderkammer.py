@@ -202,9 +202,10 @@ def fadeInPic():
 	pygame.display.flip()#pygame.display.update(Rect(x*480+xOffset, y*270+yOffset, 480, 270))
 
 def	Pics():
-	if cnt<numberPicsShown:
-		numberPicsShown = cnt
-	for i in range(numberPicsShown-1):
+	numberPicsShown_ = numberPicsShown
+	if cnt<numberPicsShown_:
+		numberPicsShown_ = cnt
+	for i in range(numberPicsShown_-1):
 		print ("ImageNr: "+str(i))
 				
 		bildAufbau()
@@ -217,8 +218,11 @@ def	Pics():
 		Pics = False
 	
 try:
+
+	player.set_media(media_WunderBox)
+	player.play()
 	while running:
-	
+		bla = 0
 		#print (GPIO.input(BTN_Pics))
  
 		#if Timelapse:
@@ -236,8 +240,7 @@ try:
 			#pygame.display.flip()
 			#time.sleep(2)
 			
-		player.set_media(media_WunderBox)
-		player.play()
+		
 		
 		
 except (KeyboardInterrupt, SystemExit):
