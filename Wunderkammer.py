@@ -18,28 +18,33 @@ GPIO.setup(BTN_Timelapse, GPIO.IN)
 
 def InterruptPics(x):
 	print("InterruptBilder")
-	player.stop()
-	Pics()
-	StartWunderbox()
+	if(not playerTimelapse.is_playing()and not picsRunning):
+		print("startingPics")
+		playerStartWunderBox.stop()
+		globals().update(picsRunning = True)
+		Pics()
+		StartWunderbox()
 	
 def InterruptTimelapse(x):
 	print("InterruptZeitraffer")
-	if(player.get_media()!=media_Timelapse):
-		player.stop()
-		player.set_media(media_Timelapse)
-		player.play()
+	picsRunning = False
+	if(not playerTimelapse.is_playing()and not picsRunning):
+		print("startingTimelapse")
+		playerStartWunderBox.stop()
+		playerTimelapse.set_media(media_Timelapse)
+		playerTimelapse.play()
 
-GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 200)
-GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 200)
+GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 1000)
+GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 1000)
 
 print ('')
 print ('')
 running = True
-Pics = False
-Timelapse = False
+picsRunning = False
 
-fadeDelay = 0.0007
-Delay = 0.2#1.5
+
+fadeDelay = 0.0001#0.0007
+Delay = 0.1#1.5
 
 BLACK = ( 0, 0, 0)
 WHITE = ( 230, 230, 230)
@@ -71,29 +76,23 @@ i = 0;
 pygame.display.set_caption('Wunderkammer')
 pygame.mouse.set_visible(False)
 
-vlcInstance = vlc.Instance()
-player = vlcInstance.media_player_new()
+vlcInstanceTimelapse = vlc.Instance()
+vlcInstanceWunderBox = vlc.Instance('--input-repeat=9999999', '--mouse-hide-timeout=0')
+playerStartWunderBox = vlcInstanceWunderBox.media_player_new()
+playerTimelapse = vlcInstanceTimelapse.media_player_new()
 
 win_id = pygame.display.get_wm_info()['window']
-print(sys.platform)
-if sys.platform == "linux": # for Linux using the X Server
-	player.set_xwindow(win_id)
-elif sys.platform == "win32": # for Windows
-	player.set_hwnd(win_id)
-elif sys.platform == "darwin": # for MacOS
-	player.set_agl(win_id)
-	
+playerStartWunderBox.set_xwindow(win_id)
+playerTimelapse.set_xwindow(win_id)
+
 #player.toggle_fullscreen()
-events = player.event_manager()
-
-
 
 pygame.mixer.quit()
 
+media_WunderBox = vlcInstanceWunderBox.media_new("test.mp4")#StartWunderbox.mp4")
+media_Timelapse = vlcInstanceTimelapse.media_new("test2.mp4")#ZeitrafferFilm.mp4")
 
-media_WunderBox = vlcInstance.media_new("StartWunderbox.mp4")
-media_Timelapse = vlcInstance.media_new("ZeitrafferFilm.mp4")
-
+print(str(media_WunderBox.get_mrl()))
 
 mylist = os.listdir('Bilder/')
 cnt = len(mylist)
@@ -104,6 +103,7 @@ PosUsed = 16*[False]
 
 PicAtPos = [4*[""]for i in range(4)]
 SizeOfPicAtPos = [4*[[0,0,0,0]]for i in range(4)]
+
 
         		
 def bildAufbau():
@@ -159,6 +159,8 @@ def fadeInPic():
 			screen.blit(imageA,(x*picW+SizeOfPicAtPos[x][y][0],y*picH+SizeOfPicAtPos[x][y][1]))
 			pygame.display.flip()
 			time.sleep(fadeDelay)
+			if not picsRunning:
+				break
 		
 	print('FadeIn')
 	
@@ -211,11 +213,23 @@ def fadeInPic():
 		pygame.display.flip()
 		
 		time.sleep(fadeDelay)
+		if not picsRunning:
+				break
 		 
 	PicAtPos[x][y] = pygame.image.tostring(image,"RGB")
 	pygame.display.flip()#pygame.display.update(Rect(x*480+xOffset, y*270+yOffset, 480, 270))
 
 def	Pics():
+	screen.fill(BLACK)
+	globals().update(mylist = os.listdir('Bilder/'))
+	globals().update(cnt = len(mylist))
+	globals().update(PicUsed = cnt*[False])
+	globals().update(PosUsed = 16*[False])
+	globals().update(PicAtPos = [4*[""]for i in range(4)])
+	globals().update(SizeOfPicAtPos = [4*[[0,0,0,0]]for i in range(4)])
+	pygame.display.flip()
+	
+	
 	numberPicsShown_ = numberPicsShown
 	if cnt<numberPicsShown_:
 		numberPicsShown_ = cnt
@@ -223,7 +237,7 @@ def	Pics():
 	pygame.mixer.init()
 	#pygame.mixer.music.load("music.mp3")
 	#pygame.mixer.music.play()
-	
+	#try:
 	for i in range(numberPicsShown_-1):
 		print ("")
 		print ("ImageNr: "+str(i))
@@ -234,28 +248,40 @@ def	Pics():
 		fadeInPic()
 		pygame.display.flip()
 		time.sleep(Delay)
+	#except():
 		
-		Pics = False	
 		
 	pygame.mixer.music.stop()
 	
 def StartWunderbox():
 	screen.fill(BLACK)
-	PicUsed = cnt*[False]
-	PosUsed = 16*[False]
-	PicAtPos = [4*[""]for i in range(4)]
-	SizeOfPicAtPos = [4*[[0,0,0,0]]for i in range(4)]
-	player.stop()
-	player.set_media(media_WunderBox)
-	player.play()
-	#player.set_playback_mode(vlc.PlaybackMode.repeat)
 	pygame.display.flip()
+	playerTimelapse.pause()
+	playerStartWunderBox.set_media(media_WunderBox)
+	playerStartWunderBox.play()
+	
 
 def EndReached(event):
 	print("EndReached")
-	StartWunderbox()
+	#StartWunderbox()
+	playerTimelapse.pause()
 	
+	#screen.fill(BLACK)
+	#pygame.display.flip()
+	playerStartWunderBox.set_media(media_WunderBox)
+	playerStartWunderBox.play()
+	#print(player.get_media().get_mrl()+" "+player.is_playing())
+	
+
+events = playerTimelapse.event_manager()
 events.event_attach(vlc.EventType.MediaPlayerEndReached, EndReached)
+
+def xxxx(event):
+	print("Tesz")
+eventsx = playerStartWunderBox.event_manager()
+eventsx.event_attach(vlc.EventType.MediaPlayerMediaChanged, xxxx)
+
+           
 
 	
 try:
@@ -263,28 +289,13 @@ try:
 	StartWunderbox()
 	while running:
 		bla = 0
-		#print (GPIO.input(BTN_Pics))
- 
-		#if Timelapse:
-					
-		#if Pics:
-			#p = subprocess.Popen(Pics())
-			
-			#print ('')
-			#print ('new')
-					
-			#bildAufbau()
-			#pygame.display.flip()
-			
-			#fadeInPic()
-			#pygame.display.flip()
-			#time.sleep(2)
-			
+		
 		
 		
 		
 except (KeyboardInterrupt, SystemExit):
-	running = False
+	globals().update(running = False)
+	picsRunning = False
 	GPIO.cleanup()
 	print('\nQuit\n')
 	pygame.quit()
