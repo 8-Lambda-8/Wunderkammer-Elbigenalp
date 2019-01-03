@@ -41,10 +41,10 @@ print ('')
 print ('')
 running = True
 picsRunning = False
-DEBUG = False
+DEBUG = True#False
 
-fadeDelay = 0.00005
-Delay = 0.1
+fadeDelay = 0.00001
+Delay = 0.03
 
 if DEBUG:
 	fadeDelay = 0.00001
@@ -107,9 +107,9 @@ pygame.mixer.quit()
 
 media_WunderBox = vlcInstanceWunderBox.media_new("StartWunderbox.mp4")
 media_Timelapse = vlcInstanceTimelapse.media_new("Zeitraffer.mp4")
-if DEBUG:
-	media_WunderBox = vlcInstanceWunderBox.media_new("test.mp4")
-	media_Timelapse = vlcInstanceTimelapse.media_new("test2.mp4")
+#if DEBUG:
+	#media_WunderBox = vlcInstanceWunderBox.media_new("test.mp4")
+	#media_Timelapse = vlcInstanceTimelapse.media_new("test2.mp4")
 	
 playerStartWunderBox.set_media(media_WunderBox)
 playerTimelapse.set_media(media_Timelapse)
@@ -151,7 +151,10 @@ def posNrToXY(pos):
 	return [x,y]
 
 def fadeInPic():
-		
+
+	xOffset = 0
+	yOffset = 0
+	
 	while True:
 		rand = random.randint(0,cnt-1)
 		if PicUsed[rand]==False:
@@ -186,9 +189,6 @@ def fadeInPic():
 	
 	image = pygame.image.load('Bilder/'+mylist[rand]).convert()
 	#print('size: '+str(image.get_size()))
-	
-	xOffset = 0
-	yOffset = 0
 	
 	if (image.get_width()/image.get_height())==screenRatio:
 		image = pygame.transform.scale(image, (picW, picH))
@@ -263,7 +263,7 @@ def	Pics():
 		numberPicsShown_ = cnt
 		
 	pygame.mixer.init()
-	#pygame.mixer.music.load("music.mp3")
+	#pygame.mixer.music.load("127_full_free-to-dream_0127.wav")
 	#pygame.mixer.music.play()
 	for i in range(numberPicsShown_-1):
 		print ("")
