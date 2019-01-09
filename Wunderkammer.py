@@ -2,7 +2,6 @@ import RPi.GPIO as GPIO
 import pygame, sys, os
 import vlc, random
 import time
-from moviepy.editor import *
 
 #init GPIO
 GPIO.cleanup()
