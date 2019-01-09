@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import pygame, sys, os
-import vlc
-import time, random
+import vlc, random
+import time
 from moviepy.editor import *
 
 #init GPIO
@@ -41,10 +41,10 @@ print ('')
 print ('')
 running = True
 picsRunning = False
-DEBUG = True#False
+DEBUG = False
 
-fadeDelay = 0.00001
-Delay = 0.03
+fadeDelay = 0.000005
+Delay = 0.01
 
 if DEBUG:
 	fadeDelay = 0.00001
@@ -69,10 +69,10 @@ print("w: "+str(w)+" h: "+str(h))
 
 screenRatio = w/h
 
-colloms = 4
-rows	= 4
+colloms = 3
+rows	= 3
 
-numberPicsShown = 48
+numberPicsShown = 36
 
 picW = int(w/rows)
 picH = int(h/colloms)
@@ -263,8 +263,8 @@ def	Pics():
 		numberPicsShown_ = cnt
 		
 	pygame.mixer.init()
-	#pygame.mixer.music.load("127_full_free-to-dream_0127.wav")
-	#pygame.mixer.music.play()
+	pygame.mixer.music.load("127_full_free-to-dream_0127.wav")
+	pygame.mixer.music.play(loops=-1, start=0.0)
 	for i in range(numberPicsShown_-1):
 		print ("")
 		print ("ImageNr: "+str(i))
