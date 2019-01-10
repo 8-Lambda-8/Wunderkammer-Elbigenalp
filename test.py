@@ -8,8 +8,7 @@ running = True
 picsRunning = False
 DEBUG = False
 
-print ("Arguments:"+str(sys.argv[0])+" "+str(len(sys.argv)))
-
+#print ("Arguments:"+str(sys.argv[0])+" "+str(len(sys.argv)))
 if len(sys.argv)>1:
         if sys.argv[1]=="--DEBUG":
                 DEBUG = True
@@ -49,6 +48,8 @@ gridPlaces = columns*rows
 
 numberPicsShown = 36
 
+border = 4
+
 picW = int(w/rows)
 picH = int(h/columns)
 
@@ -67,13 +68,10 @@ pygame.display.set_caption('Wunderkammer')
 #pygame.mouse.set_pos(w, h)
 #pygame.mouse.set_visible(False)
 
-
 mylist = os.listdir('Bilder/')
 cnt = len(mylist)
 print (mylist)
 print ('count: '+str(cnt))
-PicUsed = cnt*[False]
-PosUsed = 16*[False]
 
 numberPicsShown_ = numberPicsShown
 if cnt<numberPicsShown_:
@@ -110,7 +108,6 @@ def reRandomizeOrderLists():
 
 PicAtPos = [rows*[""]for i in range(columns)]
 SizeOfPicAtPos = [rows*[[0,0,0,0]]for i in range(columns)]
-
         		
 def bildAufbau():
 	for x in range(columns):
@@ -136,34 +133,14 @@ def fadeInPic(nr):
 
 	print("x"+str(x))
 	print("y"+str(y))
-	
 
 	xOffset = 0
 	yOffset = 0
-	
-	'''
-	while True:
-		rand = random.randint(0,cnt-1)
-		if PicUsed[rand]==False:
-			break
-	
-	fadeOut = True
-	for i in range(15):
-		if PosUsed[i]==False:
-			fadeOut = False
-	
-	while True:	
-		pos = random.randint(0,15)
-		if PosUsed[pos]==False or fadeOut:
-			break
-	'''
-	
+		
 	if nr<gridPlaces:
 		fadeOut = False
 	else:
 		fadeOut = True
-
-	
 		
 	if fadeOut:
 		print('FadeOut')
@@ -183,24 +160,24 @@ def fadeInPic(nr):
 	#print('size: '+str(image.get_size()))
 	
 	if (image.get_width()/image.get_height())==screenRatio:
-		image = pygame.transform.scale(image, (picW, picH))
-		SizeOfPicAtPos[x][y] = [0,0,picW,picH]
+		image = pygame.transform.scale(image, (picW-border*2, picH-border*2))
+		SizeOfPicAtPos[x][y] = [0+border,0+border,picW-border*2,picH-border*2]
 		
 	elif (image.get_width()/image.get_height())>screenRatio:
-		h = int(picW/(image.get_width()/image.get_height()))
-		image = pygame.transform.scale(image, (picW, h))
+		h = int((picW-border*2)/(image.get_width()/image.get_height()))
+		image = pygame.transform.scale(image, (picW-border*2, h))
 		yOffset = int((picH-h)/2)
-		SizeOfPicAtPos[x][y] = [0,yOffset,picW,h]
+		SizeOfPicAtPos[x][y] = [0+border,yOffset,picW-border*2,h]
 		
 	elif (image.get_width()/image.get_height())<screenRatio:
-		w = int(picH*(image.get_width()/image.get_height()))
-		image = pygame.transform.scale(image,(w, picH))
+		w = int((picH-border*2)*(image.get_width()/image.get_height()))
+		image = pygame.transform.scale(image,(w, picH-border*2))
 		xOffset = int((picW-w)/2)
-		SizeOfPicAtPos[x][y] = [xOffset,0,w,picH]
+		SizeOfPicAtPos[x][y] = [xOffset,0+border,w,picH-border*2]
 		
 	else:
-		image = pygame.transform.scale(image, (picW, picH))
-		SizeOfPicAtPos[x][y] = [0,0,picW,picH]		
+		image = pygame.transform.scale(image, (picW-border*2, picH-border*2))
+		SizeOfPicAtPos[x][y] = [0+border,0+border,picW-border*2,picH-border*2]		
 			
 	#pygame.display.flip()
 	imageA = image
@@ -211,7 +188,8 @@ def fadeInPic(nr):
 		screen.fill(BLACK)
 		bildAufbau()
 		imageA.set_alpha(i)
-		screen.blit(imageA,(x*picW+xOffset,y*picH+yOffset))
+		#screen.blit(imageA,(x*picW+xOffset,y*picH+yOffset))
+		screen.blit(imageA,(picW*x+SizeOfPicAtPos[x][y][0],picH*y+SizeOfPicAtPos[x][y][1]))
 		pygame.display.flip()
 		
 		time.sleep(fadeDelay)
@@ -224,8 +202,6 @@ def	Pics():
 	screen.fill(BLACK)
 	globals().update(mylist = os.listdir('Bilder/'))
 	globals().update(cnt = len(mylist))
-	globals().update(PicUsed = cnt*[False])
-	globals().update(PosUsed = gridPlaces*[False])
 	globals().update(PicAtPos = [rows*[""]for i in range(columns)])
 	globals().update(SizeOfPicAtPos = [rows*[[0,0,0,0]]for i in range(columns)])
 
@@ -246,7 +222,7 @@ def	Pics():
 	
 	pygame.display.update()
 		
-	pygame.mixer.init()
+	#pygame.mixer.init()
 	#pygame.mixer.music.load("127_full_free-to-dream_0127.wav")
 	#pygame.mixer.music.play(loops=-1, start=0.0)
 
@@ -261,7 +237,7 @@ def	Pics():
 		pygame.display.flip()
 		time.sleep(Delay)
 	time.sleep(1)
-	pygame.mixer.music.stop()
+	#pygame.mixer.music.stop()
 	globals().update(picsRunning = False)
 	
 try:
