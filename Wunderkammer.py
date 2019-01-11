@@ -1,7 +1,9 @@
 import RPi.GPIO as GPIO
 import pygame, sys, os
 import vlc, random
-import time
+import time, threading
+
+#sys.stdout = open('file', 'w')
 
 #init GPIO
 GPIO.cleanup()
@@ -16,28 +18,36 @@ GPIO.setup(BTN_Pics, GPIO.IN)
 GPIO.setup(BTN_Timelapse, GPIO.IN)
 
 def InterruptPics(x):
+	print("")
 	print("InterruptBilder")
-	if(not playerTimelapse.is_playing()and not picsRunning):
+	if( not picsRunning): #not playerTimelapse.is_playing()and
 		print("startingPics")
 		playerStartWunderBox.stop()
+		playerTimelapse.pause()
 		globals().update(picsRunning = True)
-		Pics()
-		StartWunderbox()
+		#print ("picsRunning: "+str(picsRunning))
+		
+		stop_event = threading.Event()
+		PicsThread = threading.Thread(target=Pics, args=(123,stop_event))
+		PicsThread.start()
+		#Pics()
 	
 def InterruptTimelapse(x):
+	print("")
 	print("InterruptZeitraffer")
-	if(not playerTimelapse.is_playing()and not picsRunning):
+	if(not playerTimelapse.is_playing()): #and not picsRunning):
 		print("startingTimelapse")
+		globals().update(picsRunning = False)
+		stop_event.set()
 		playerTimelapse.set_xwindow(win_id)
 		playerStartWunderBox.stop()
 		playerTimelapse.set_media(media_Timelapse)
 		playerTimelapse.play()
 
-GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 20000)
-GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 20000)
+GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 2000)
+GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 2000)
 
-print ('')
-print ('')
+
 running = True
 picsRunning = False
 DEBUG = False
@@ -46,13 +56,18 @@ if len(sys.argv)>1:
         if sys.argv[1]=="--DEBUG":
                 DEBUG = True
 
-fadeDelay = 0.005
-Delay = 2
+fadeDelay = 0.0000005
+Delay = 0.0005
+
+fadeDelay = 0.0000001
+Delay = 0.0001
 
 if DEBUG:
-	fadeDelay = 0.005
-	Delay = 2
-
+	fadeDelay = 0.0000001
+	Delay = 0.0001
+	
+print ('')
+print ('')
 print("fadeDelay "+str(fadeDelay))
 print("Delay "+str(Delay))
 	
@@ -66,21 +81,23 @@ w = infoObject.current_w
 h = infoObject.current_h
 if DEBUG:
 	w=16*40
-	h=10*40
+	h=9*40
 
 print("w: "+str(w)+" h: "+str(h))
 
 screenRatio = w/h
 
-colloms = 3
+columns = 3
 rows	= 3
 
-numberPicsShown = 36
+gridPlaces = columns*rows
+
+numberPicsShown = 36-9
 
 border = 4
 
 picW = int(w/rows)
-picH = int(h/colloms)
+picH = int(h/columns)
 
 print("picH: "+str(picH)+" picW: "+str(picW))
 
@@ -112,18 +129,23 @@ pygame.mixer.quit()
 
 media_WunderBox = vlcInstanceWunderBox.media_new("StartWunderbox.mp4")
 media_Timelapse = vlcInstanceTimelapse.media_new("Zeitraffer.mp4")
-#if DEBUG:
-	#media_WunderBox = vlcInstanceWunderBox.media_new("test.mp4")
-	#media_Timelapse = vlcInstanceTimelapse.media_new("test2.mp4")
+
+if DEBUG:
+	if "test.mp4"in os.listdir():
+		media_WunderBox = vlcInstanceWunderBox.media_new("test.mp4")
+	if "test2.mp4"in os.listdir():
+		media_Timelapse = vlcInstanceTimelapse.media_new("test2.mp4")
 	
 playerStartWunderBox.set_media(media_WunderBox)
 playerTimelapse.set_media(media_Timelapse)
 
-print(str(media_WunderBox.get_mrl()))
+
 
 mylist = os.listdir('Bilder/')
 cnt = len(mylist)
-print (mylist)
+print("")
+print ("Image List:"+str(mylist))
+print("")
 print ('count: '+str(cnt))
 PicUsed = cnt*[False]
 PosUsed = gridPlaces*[False]
@@ -144,17 +166,16 @@ def reRandomizeOrderLists():
 	ii=0
 	print("nrPicsShown:"+str(numberPicsShown_))
 	print("loop: "+str(numberPicsShown_/(gridPlaces)))
-	print("loopR:"+str(int(numberPicsShown_/(gridPlaces)))+" "+str(range(int(numberPicsShown_/(gridPlaces)))))
+	#print("loopR:"+str(int(numberPicsShown_/(gridPlaces)))+" "+str(range(int(numberPicsShown_/(gridPlaces)))))
 	for ii in range(int(numberPicsShown_/(gridPlaces))+1):
 		randOrder = random.sample(range(gridPlaces), gridPlaces)
-		print("xxx: "+str(randOrder))
+		#print("randOrder: "+str(randOrder))
 		x = 0
 		if ii>=int(numberPicsShown_/(gridPlaces)):
-			print("x")
 			x = gridPlaces-(numberPicsShown_-gridPlaces*ii)
-		print("xxx: "+str(x)+" "+str(gridPlaces-x))
+		#print("xxx: "+str(x)+" "+str(gridPlaces-x))
 		for i in range(gridPlaces-x):
-			print(str((gridPlaces)*ii+i)+"  "+str(ii)+"  "+str(i)+" :  "+str(randOrder[i]))
+			#print(str((gridPlaces)*ii+i)+"  "+str(ii)+"  "+str(i)+" :  "+str(randOrder[i]))
 			PosOrder_List_[(gridPlaces)*ii+i] = randOrder[i]
 		
 	globals().update(PosOrder_List = PosOrder_List_)
@@ -166,7 +187,7 @@ PicAtPos = [rows*[""]for i in range(columns)]
 SizeOfPicAtPos = [rows*[[0,0,0,0]]for i in range(columns)]
 
         		
-def bildAufbau():
+def bildAufbau(alpha=255):	
 	for x in range(columns):
 		for y in range (rows):
 			if PicAtPos[x][y] != "":
@@ -211,6 +232,8 @@ def fadeInPic(nr):
 			screen.blit(imageA,(x*picW+SizeOfPicAtPos[x][y][0],y*picH+SizeOfPicAtPos[x][y][1]))
 			pygame.display.flip()
 			time.sleep(fadeDelay)
+			if not picsRunning:
+				return
 		
 	print('FadeIn')
 	
@@ -251,12 +274,28 @@ def fadeInPic(nr):
 		pygame.display.flip()
 		
 		time.sleep(fadeDelay)
+		if not picsRunning:
+			return
 		
 		 
 	PicAtPos[x][y] = pygame.image.tostring(image,"RGB")
 	pygame.display.flip()#pygame.display.update(Rect(x*480+xOffset, y*270+yOffset, 480, 270))
 
-def	Pics():
+def fadeOutAll():
+	print('')
+	print('FadeOutAll')
+	print('')
+	print('')
+	for i in reversed(range (255)):
+		screen.fill(BLACK)
+		bildAufbau(i)
+		#imageA.set_alpha(i)
+		#screen.blit(imageA,(x*picW+SizeOfPicAtPos[x][y][0],y*picH+SizeOfPicAtPos[x][y][1]))
+		pygame.display.flip()
+		time.sleep(fadeDelay)
+	
+def	Pics(abcde, stop_event):
+
 	screen.fill(BLACK)
 	globals().update(mylist = os.listdir('Bilder/'))
 	globals().update(cnt = len(mylist))
@@ -283,8 +322,8 @@ def	Pics():
 	pygame.display.update()
 		
 	pygame.mixer.init()
-	#pygame.mixer.music.load("127_full_free-to-dream_0127.wav")
-	#pygame.mixer.music.play(loops=-1, start=0.0)
+	pygame.mixer.music.load("127_full_free-to-dream_0127.wav")
+	pygame.mixer.music.play(loops=-1, start=0.0)
 
 	for i in range(numberPicsShown_-1):
 		print ("")
@@ -296,34 +335,42 @@ def	Pics():
 		fadeInPic(i)
 		pygame.display.flip()
 		time.sleep(Delay)
+		print ("picsRunning: "+str(picsRunning))
+		
+		if not picsRunning:
+			return
+			
 	time.sleep(1)
+	fadeOutAll()	
 	pygame.mixer.music.stop()
 	globals().update(picsRunning = False)
-	
-	
+	StartWunderbox()
+	return
+		
 def StartWunderbox():
+	print("")
+	print("StartWunderbox")
 	screen.fill(BLACK)
 	pygame.display.flip()
-	#playerTimelapse.stop()#pause()
+	
 	playerStartWunderBox.set_media(media_WunderBox)
 	playerStartWunderBox.play()
 	
-
 def EndReached(event):
+	print("")
 	print("EndReached")
 	pygame.display.flip()
-	#StartWunderbox()
-	playerTimelapse.set_xwindow(0)
 	playerTimelapse.pause()
+	
 	#playerTimelapse.release()
-	screen.fill(BLACK)
-	pygame.display.flip()
-	playerStartWunderBox.set_media(media_WunderBox)
-	playerStartWunderBox.play()
+	StartWunderbox()
 
 events = playerTimelapse.event_manager()
 events.event_attach(vlc.EventType.MediaPlayerEndReached, EndReached)
 
+stop_event= threading.Event()
+PicsThread = threading.Thread(target=Pics, args=(123,stop_event))
+PicsThread.daemon = True
   	
 try:
 
