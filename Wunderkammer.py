@@ -60,11 +60,11 @@ fadeDelay = 0.0000005
 Delay = 0.0005
 
 fadeDelay = 0.0000001
-Delay = 0.0001
+Delay = 0.00001
 
 if DEBUG:
 	fadeDelay = 0.0000001
-	Delay = 0.0001
+	Delay = 0.00001
 	
 print ('')
 print ('')
