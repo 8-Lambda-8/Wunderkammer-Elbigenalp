@@ -22,7 +22,7 @@ def InterruptPics(x):
 	print("InterruptBilder")
 	if( not picsRunning): #not playerTimelapse.is_playing()and
 		print("startingPics")
-		playerStartWunderBox.stop()
+		playerStartWunderBox.pause()#stop()
 		playerTimelapse.pause()
 		globals().update(picsRunning = True)
 		#print ("picsRunning: "+str(picsRunning))
@@ -56,15 +56,15 @@ if len(sys.argv)>1:
         if sys.argv[1]=="--DEBUG":
                 DEBUG = True
 
-fadeDelay = 0.0000005
-Delay = 0.0005
+#fadeDelay = 0.0000005
+#Delay = 0.0005
 
 fadeDelay = 0.0000001
-Delay = 0.00001
+Delay = 0.0001
 
 if DEBUG:
-	fadeDelay = 0.0000001
-	Delay = 0.00001
+	fadeDelay = 0.00000005
+	Delay = 0.00005
 	
 print ('')
 print ('')
@@ -80,8 +80,8 @@ infoObject = pygame.display.Info()
 w = infoObject.current_w
 h = infoObject.current_h
 if DEBUG:
-	w=16*40
-	h=9*40
+	w=16*60
+	h=9*60
 
 print("w: "+str(w)+" h: "+str(h))
 
@@ -105,6 +105,7 @@ if DEBUG:
 	screen = pygame.display.set_mode((w, h))
 else:
 	screen = pygame.display.set_mode((w, h),pygame.FULLSCREEN)
+	
 screen.fill(BLACK)
 
 i = 0;
@@ -138,8 +139,6 @@ if DEBUG:
 	
 playerStartWunderBox.set_media(media_WunderBox)
 playerTimelapse.set_media(media_Timelapse)
-
-
 
 mylist = os.listdir('Bilder/')
 cnt = len(mylist)
@@ -208,43 +207,18 @@ def fadeInPic(nr):
 
 	x = posNrToXY(PosOrder_List[nr])[0]
 	y = posNrToXY(PosOrder_List[nr])[1]
-
+	
+	imageRect = pygame.Rect(picW*x,picH*y,picW,picH)
+	
 	print("x"+str(x))
 	print("y"+str(y))
 	
 	xOffset = 0
 	yOffset = 0
-
-
-	if nr<gridPlaces:
-		fadeOut = False
-	else:
-		fadeOut = True
-		
-	if fadeOut:
-		print('FadeOut')
-		imageA = pygame.image.fromstring(PicAtPos[x][y],(SizeOfPicAtPos[x][y][2], SizeOfPicAtPos[x][y][3]),"RGB")
-		PicAtPos[x][y] = ""
-		for i in reversed(range (255)):
-			screen.fill(BLACK)
-			bildAufbau()
-			imageA.set_alpha(i)
-			screen.blit(imageA,(x*picW+SizeOfPicAtPos[x][y][0],y*picH+SizeOfPicAtPos[x][y][1]))
-			pygame.display.flip()
-			time.sleep(fadeDelay)
-			if not picsRunning:
-				return
-		
-	print('FadeIn')
 	
 	image = pygame.image.load('Bilder/'+mylist[ImageOrder_List[nr]]).convert()
-	#print('size: '+str(image.get_size()))
 	
-	if (image.get_width()/image.get_height())==screenRatio:
-		image = pygame.transform.scale(image, (picW-border*2, picH-border*2))
-		SizeOfPicAtPos[x][y] = [0+border,0+border,picW-border*2,picH-border*2]
-		
-	elif (image.get_width()/image.get_height())>screenRatio:
+	if (image.get_width()/image.get_height())>screenRatio:
 		h = int((picW-border*2)/(image.get_width()/image.get_height()))
 		image = pygame.transform.scale(image, (picW-border*2, h))
 		yOffset = int((picH-h)/2)
@@ -258,37 +232,55 @@ def fadeInPic(nr):
 		
 	else:
 		image = pygame.transform.scale(image, (picW-border*2, picH-border*2))
-		SizeOfPicAtPos[x][y] = [0+border,0+border,picW-border*2,picH-border*2]		
+		SizeOfPicAtPos[x][y] = [0+border,0+border,picW-border*2,picH-border*2]	
+
+		
+	if nr>gridPlaces:
+		print('FadeOut')
+		imageA = pygame.image.fromstring(PicAtPos[x][y],(SizeOfPicAtPos[x][y][2], SizeOfPicAtPos[x][y][3]),"RGB")
+		PicAtPos[x][y] = ""
+		for i in reversed(range (int(254/2))):
 			
-	#pygame.display.flip()
+			#screen.fill(BLACK)
+			#bildAufbau()
+			
+			pygame.draw.rect(screen,BLACK,imageRect)
+			
+			imageA.set_alpha(i*2)
+			screen.blit(imageA,(x*picW+SizeOfPicAtPos[x][y][0],y*picH+SizeOfPicAtPos[x][y][1]))
+			pygame.display.update(imageRect)
+			time.sleep(fadeDelay)
+			if not picsRunning:
+				return
+		
+	print('FadeIn')
+				
 	imageA = image
 	i=0
-	for i in range (255):
-		#if	i % 10 == 0:
-		#	print (i)
-		screen.fill(BLACK)
-		bildAufbau()
-		imageA.set_alpha(i)
-		#screen.blit(imageA,(x*picW+xOffset,y*picH+yOffset))
+	for i in range (int(254/2)):
+	
+		pygame.draw.rect(screen,BLACK,imageRect)
+		
+		imageA.set_alpha(i*2)
 		screen.blit(imageA,(picW*x+SizeOfPicAtPos[x][y][0],picH*y+SizeOfPicAtPos[x][y][1]))
-		pygame.display.flip()
+		pygame.display.update(imageRect)
 		
 		time.sleep(fadeDelay)
 		if not picsRunning:
 			return
 		
-		 
 	PicAtPos[x][y] = pygame.image.tostring(image,"RGB")
-	pygame.display.flip()#pygame.display.update(Rect(x*480+xOffset, y*270+yOffset, 480, 270))
+	bildAufbau()
+	pygame.display.flip()
 
 def fadeOutAll():
 	print('')
 	print('FadeOutAll')
 	print('')
 	print('')
-	for i in reversed(range (255)):
+	for i in reversed(range (int(254/2))):
 		screen.fill(BLACK)
-		bildAufbau(i)
+		bildAufbau(i*2)
 		#imageA.set_alpha(i)
 		#screen.blit(imageA,(x*picW+SizeOfPicAtPos[x][y][0],y*picH+SizeOfPicAtPos[x][y][1]))
 		pygame.display.flip()
@@ -328,14 +320,9 @@ def	Pics(abcde, stop_event):
 	for i in range(numberPicsShown_-1):
 		print ("")
 		print ("ImageNr: "+str(i))
-				
-		bildAufbau()
-		pygame.display.flip()
-		
+						
 		fadeInPic(i)
-		pygame.display.flip()
 		time.sleep(Delay)
-		print ("picsRunning: "+str(picsRunning))
 		
 		if not picsRunning:
 			return
@@ -351,8 +338,7 @@ def StartWunderbox():
 	print("")
 	print("StartWunderbox")
 	screen.fill(BLACK)
-	pygame.display.flip()
-	
+	pygame.display.flip()	
 	playerStartWunderBox.set_media(media_WunderBox)
 	playerStartWunderBox.play()
 	
@@ -373,7 +359,6 @@ PicsThread = threading.Thread(target=Pics, args=(123,stop_event))
 PicsThread.daemon = True
   	
 try:
-
 	StartWunderbox()
 	while running:
 		bla = 0
