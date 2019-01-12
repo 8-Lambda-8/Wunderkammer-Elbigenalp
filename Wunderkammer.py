@@ -169,11 +169,11 @@ def reRandomizeOrderLists():
 	for ii in range(int(numberPicsShown_/(gridPlaces))+1):
 		randOrder = random.sample(range(gridPlaces), gridPlaces)
 		#print("randOrder: "+str(randOrder))
-		x = 0
+		xxx = 0
 		if ii>=int(numberPicsShown_/(gridPlaces)):
-			x = gridPlaces-(numberPicsShown_-gridPlaces*ii)
-		#print("xxx: "+str(x)+" "+str(gridPlaces-x))
-		for i in range(gridPlaces-x):
+			xxx = gridPlaces-(numberPicsShown_-gridPlaces*ii)
+		#print("xxx: "+str(xxx)+" "+str(gridPlaces-xxx))
+		for i in range(gridPlaces-xxx):
 			#print(str((gridPlaces)*ii+i)+"  "+str(ii)+"  "+str(i)+" :  "+str(randOrder[i]))
 			PosOrder_List_[(gridPlaces)*ii+i] = randOrder[i]
 		
@@ -218,6 +218,27 @@ def fadeInPic(nr):
 	
 	image = pygame.image.load('Bilder/'+mylist[ImageOrder_List[nr]]).convert()
 	
+		
+
+	if nr>gridPlaces:
+		print('FadeOut')
+		
+		imageA = pygame.image.fromstring(PicAtPos[x][y],(SizeOfPicAtPos[x][y][2], SizeOfPicAtPos[x][y][3]),"RGB")
+		#PicAtPos[x][y] = ""
+		for i in reversed(range (int(254/2))):
+			
+			#screen.fill(BLACK)
+			#bildAufbau()
+			
+			pygame.draw.rect(screen,BLACK,imageRect)
+			
+			imageA.set_alpha(i*2)
+			screen.blit(imageA,(x*picW+SizeOfPicAtPos[x][y][0],y*picH+SizeOfPicAtPos[x][y][1]))
+			pygame.display.update(imageRect)
+			time.sleep(fadeDelay)
+			if not picsRunning:
+				return
+	
 	if (image.get_width()/image.get_height())>screenRatio:
 		h = int((picW-border*2)/(image.get_width()/image.get_height()))
 		image = pygame.transform.scale(image, (picW-border*2, h))
@@ -232,31 +253,13 @@ def fadeInPic(nr):
 		
 	else:
 		image = pygame.transform.scale(image, (picW-border*2, picH-border*2))
-		SizeOfPicAtPos[x][y] = [0+border,0+border,picW-border*2,picH-border*2]	
-
-		
-	if nr>gridPlaces:
-		print('FadeOut')
-		imageA = pygame.image.fromstring(PicAtPos[x][y],(SizeOfPicAtPos[x][y][2], SizeOfPicAtPos[x][y][3]),"RGB")
-		PicAtPos[x][y] = ""
-		for i in reversed(range (int(254/2))):
-			
-			#screen.fill(BLACK)
-			#bildAufbau()
-			
-			pygame.draw.rect(screen,BLACK,imageRect)
-			
-			imageA.set_alpha(i*2)
-			screen.blit(imageA,(x*picW+SizeOfPicAtPos[x][y][0],y*picH+SizeOfPicAtPos[x][y][1]))
-			pygame.display.update(imageRect)
-			time.sleep(fadeDelay)
-			if not picsRunning:
-				return
-		
+		SizeOfPicAtPos[x][y] = [0+border,0+border,picW-border*2,picH-border*2]
+	
 	print('FadeIn')
 				
 	imageA = image
-	i=0
+	PicAtPos[x][y] = pygame.image.tostring(image,"RGB")
+	
 	for i in range (int(254/2)):
 	
 		pygame.draw.rect(screen,BLACK,imageRect)
@@ -269,7 +272,7 @@ def fadeInPic(nr):
 		if not picsRunning:
 			return
 		
-	PicAtPos[x][y] = pygame.image.tostring(image,"RGB")
+	
 	bildAufbau()
 	pygame.display.flip()
 
