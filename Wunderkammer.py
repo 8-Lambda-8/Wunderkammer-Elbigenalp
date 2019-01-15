@@ -3,8 +3,6 @@ import pygame, sys, os
 import vlc, random
 import time, threading
 
-#sys.stdout = open('file', 'w')
-
 #init GPIO
 GPIO.cleanup()
 BTN_Pics = 17
@@ -80,8 +78,8 @@ infoObject = pygame.display.Info()
 w = infoObject.current_w
 h = infoObject.current_h
 if DEBUG:
-	w=16*60
-	h=9*60
+	w=16*80
+	h=9*80
 
 print("w: "+str(w)+" h: "+str(h))
 
