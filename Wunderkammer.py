@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import pygame, sys, os
 import vlc, random
 import time, threading
+from datetime import datetime
 
 #init GPIO
 GPIO.cleanup()
@@ -17,6 +18,7 @@ GPIO.setup(BTN_Timelapse, GPIO.IN)
 
 def InterruptPics(x):
 	print("")
+	print(datetime.now())
 	print("InterruptBilder")
 	if( not picsRunning): #not playerTimelapse.is_playing()and
 		print("startingPics")
@@ -32,10 +34,12 @@ def InterruptPics(x):
 	
 def InterruptTimelapse(x):
 	print("")
+	print(datetime.now())
 	print("InterruptZeitraffer")
 	if(not playerTimelapse.is_playing()): #and not picsRunning):
 		print("startingTimelapse")
 		globals().update(picsRunning = False)
+		pygame.mixer.music.stop()
 		stop_event.set()
 		playerTimelapse.set_xwindow(win_id)
 		playerStartWunderBox.stop()
@@ -65,6 +69,9 @@ if DEBUG:
 	Delay = 0.00005
 	
 print ('')
+print ('')
+print ('!START!')
+print(datetime.now())
 print ('')
 print("fadeDelay "+str(fadeDelay))
 print("Delay "+str(Delay))
