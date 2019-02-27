@@ -21,15 +21,18 @@ def InterruptPics(x):
 	print(datetime.now())
 	print("InterruptBilder")
 	if( not picsRunning): #not playerTimelapse.is_playing()and
+		globals().update(picsRunning = True)
 		print("startingPics")
 		playerStartWunderBox.pause()#stop()
 		playerTimelapse.pause()
-		globals().update(picsRunning = True)
+		
 		#print ("picsRunning: "+str(picsRunning))
 		
 		stop_event = threading.Event()
 		PicsThread = threading.Thread(target=Pics, args=(123,stop_event))
 		PicsThread.start()
+		playerStartWunderBox.pause()#stop()
+		playerTimelapse.pause()
 		#Pics()
 	
 def InterruptTimelapse(x):
@@ -37,8 +40,9 @@ def InterruptTimelapse(x):
 	print(datetime.now())
 	print("InterruptZeitraffer")
 	if(not playerTimelapse.is_playing()): #and not picsRunning):
-		print("startingTimelapse")
 		globals().update(picsRunning = False)
+		print("startingTimelapse")
+		
 		pygame.mixer.music.stop()
 		stop_event.set()
 		playerTimelapse.set_xwindow(win_id)
@@ -46,8 +50,8 @@ def InterruptTimelapse(x):
 		playerTimelapse.set_media(media_Timelapse)
 		playerTimelapse.play()
 
-GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 2000)
-GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 2000)
+GPIO.add_event_detect(BTN_Pics, GPIO.RISING, callback = InterruptPics, bouncetime = 5000)
+GPIO.add_event_detect(BTN_Timelapse, GPIO.RISING, callback = InterruptTimelapse, bouncetime = 5000)
 
 
 running = True
@@ -223,8 +227,6 @@ def fadeInPic(nr):
 	
 	image = pygame.image.load('Bilder/'+mylist[ImageOrder_List[nr]]).convert()
 	
-		
-
 	if nr>gridPlaces:
 		print('FadeOut')
 		
@@ -242,6 +244,7 @@ def fadeInPic(nr):
 			pygame.display.update(imageRect)
 			time.sleep(fadeDelay)
 			if not picsRunning:
+				pygame.mixer.fadeout(1000)
 				return
 	
 	if (image.get_width()/image.get_height())>screenRatio:
@@ -275,6 +278,7 @@ def fadeInPic(nr):
 		
 		time.sleep(fadeDelay)
 		if not picsRunning:
+			pygame.mixer.fadeout(1000)
 			return
 		
 	
@@ -286,6 +290,7 @@ def fadeOutAll():
 	print('FadeOutAll')
 	print('')
 	print('')
+	pygame.mixer.fadeout(254/2*fadeDelay)
 	for i in reversed(range (int(254/2))):
 		screen.fill(BLACK)
 		bildAufbau(i*2)
@@ -326,6 +331,16 @@ def	Pics(abcde, stop_event):
 	pygame.mixer.music.play(loops=-1, start=0.0)
 
 	for i in range(numberPicsShown_-1):
+		print(playerTimelapse.get_state())
+		
+		try:
+			print(vlc.State.Playing)
+
+			if playerTimelapse.get_state()==vlc.State.Playing:
+				playerTimelapse.pause()
+		except:
+			print("Error On State.Playing")
+			
 		print ("")
 		print ("ImageNr: "+str(i))
 						
