@@ -69,8 +69,8 @@ fadeDelay = 0.0000001
 Delay = 0.0001
 
 if DEBUG:
-	fadeDelay = 0.00000005
-	Delay = 0.00005
+	fadeDelay = 0.000000001
+	Delay = 0.0000001
 	
 print ('')
 print ('')
@@ -200,6 +200,7 @@ def bildAufbau(alpha=255):
 		for y in range (rows):
 			if PicAtPos[x][y] != "":
 				img = pygame.image.fromstring(PicAtPos[x][y],(SizeOfPicAtPos[x][y][2], SizeOfPicAtPos[x][y][3]),"RGB")
+				img.set_alpha(alpha)
 				screen.blit(img,(picW*x+SizeOfPicAtPos[x][y][0],picH*y+SizeOfPicAtPos[x][y][1]))
 			
 def posNrToXY(pos):
@@ -244,7 +245,7 @@ def fadeInPic(nr):
 			pygame.display.update(imageRect)
 			time.sleep(fadeDelay)
 			if not picsRunning:
-				pygame.mixer.fadeout(1000)
+				#pygame.mixer.fadeout(1000)
 				return
 	
 	if (image.get_width()/image.get_height())>screenRatio:
@@ -290,14 +291,15 @@ def fadeOutAll():
 	print('FadeOutAll')
 	print('')
 	print('')
-	pygame.mixer.fadeout(254/2*fadeDelay)
+	
 	for i in reversed(range (int(254/2))):
+		pygame.mixer.music.set_volume(i/254)
 		screen.fill(BLACK)
 		bildAufbau(i*2)
-		#imageA.set_alpha(i)
-		#screen.blit(imageA,(x*picW+SizeOfPicAtPos[x][y][0],y*picH+SizeOfPicAtPos[x][y][1]))
+		print(i)
 		pygame.display.flip()
 		time.sleep(fadeDelay)
+	pygame.mixer.music.stop()
 	
 def	Pics(abcde, stop_event):
 
@@ -331,10 +333,8 @@ def	Pics(abcde, stop_event):
 	pygame.mixer.music.play(loops=-1, start=0.0)
 
 	for i in range(numberPicsShown_-1):
-		print(playerTimelapse.get_state())
-		
+			
 		try:
-			print(vlc.State.Playing)
 
 			if playerTimelapse.get_state()==vlc.State.Playing:
 				playerTimelapse.pause()
@@ -348,11 +348,13 @@ def	Pics(abcde, stop_event):
 		time.sleep(Delay)
 		
 		if not picsRunning:
+			pygame.mixer.music.stop()
 			return
 			
 	time.sleep(1)
+	##pygame.mixer.fadeout(254/2*fadeDelay)
 	fadeOutAll()	
-	pygame.mixer.music.stop()
+	#pygame.mixer.music.stop()
 	globals().update(picsRunning = False)
 	StartWunderbox()
 	return
@@ -382,7 +384,9 @@ PicsThread = threading.Thread(target=Pics, args=(123,stop_event))
 PicsThread.daemon = True
   	
 try:
+	pygame.mixer.init()
 	StartWunderbox()
+	time.sleep(5000)
 	while running:
 		bla = 0
 		
