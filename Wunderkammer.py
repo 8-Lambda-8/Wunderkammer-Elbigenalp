@@ -27,7 +27,7 @@ def InterruptPics(x):
 		playerTimelapse.pause()
 		
 		#print ("picsRunning: "+str(picsRunning))
-		
+		pygame.mixer.music.set_volume(1)
 		stop_event = threading.Event()
 		PicsThread = threading.Thread(target=Pics, args=(123,stop_event))
 		PicsThread.start()
@@ -300,6 +300,7 @@ def fadeOutAll():
 		pygame.display.flip()
 		time.sleep(fadeDelay)
 	pygame.mixer.music.stop()
+  pygame.mixer.music.set_volume(1)
 	
 def	Pics(abcde, stop_event):
 
