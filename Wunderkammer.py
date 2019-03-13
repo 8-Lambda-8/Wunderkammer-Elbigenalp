@@ -264,6 +264,9 @@ def fadeInPic(nr):
 		image = pygame.transform.scale(image, (picW-border*2, picH-border*2))
 		SizeOfPicAtPos[x][y] = [0+border,0+border,picW-border*2,picH-border*2]
 	
+	
+	time.sleep(fadeDelay*4)
+	
 	print('FadeIn')
 				
 	imageA = image
@@ -292,15 +295,15 @@ def fadeOutAll():
 	print('')
 	print('')
 	
-	for i in reversed(range (int(254/2))):
+	for i in reversed(range (int(254/4))):
 		pygame.mixer.music.set_volume(i/254)
 		screen.fill(BLACK)
-		bildAufbau(i*2)
+		bildAufbau(i*4)
 		print(i)
 		pygame.display.flip()
 		time.sleep(fadeDelay)
 	pygame.mixer.music.stop()
-  pygame.mixer.music.set_volume(1)
+	pygame.mixer.music.set_volume(1)
 	
 def	Pics(abcde, stop_event):
 
