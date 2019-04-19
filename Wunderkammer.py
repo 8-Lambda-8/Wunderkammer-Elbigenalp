@@ -366,6 +366,7 @@ def	Pics(abcde, stop_event):
 def StartWunderbox():
 	print("")
 	print("StartWunderbox")
+	print(datetime.now())
 	screen.fill(BLACK)
 	pygame.display.flip()	
 	playerStartWunderBox.set_media(media_WunderBox)
@@ -374,14 +375,24 @@ def StartWunderbox():
 def EndReached(event):
 	print("")
 	print("EndReached")
+	print(datetime.now())
 	pygame.display.flip()
 	playerTimelapse.pause()
 	
 	#playerTimelapse.release()
 	StartWunderbox()
+	
+#def StartWunderboxEndReached(event):
+#	print("")
+#	print("StartWunderbox-EndReached")
+#	print(datetime.now())
+	
 
 events = playerTimelapse.event_manager()
 events.event_attach(vlc.EventType.MediaPlayerEndReached, EndReached)
+
+#eventsStartWunderBox = playerStartWunderBox.event_manager()
+#eventsStartWunderBox.event_attach(vlc.EventType.MediaPlayerEndReached, StartWunderboxEndReached)
 
 stop_event= threading.Event()
 PicsThread = threading.Thread(target=Pics, args=(123,stop_event))
@@ -393,11 +404,13 @@ try:
 	time.sleep(5000)
 	while running:
 		bla = 0
-		
-				
+					
 except (KeyboardInterrupt, SystemExit):
 	globals().update(running = False)
 	picsRunning = False
 	GPIO.cleanup()
 	print('\nQuit\n')
 	pygame.quit()
+	
+#except Exception as e:
+#	print(e)
