@@ -166,6 +166,7 @@ ImageOrder_List = numberPicsShown_*[0]
 PosOrder_List = numberPicsShown_*[0]
 
 def reRandomizeOrderLists():
+	globals().update(mylist = os.listdir('Bilder/'))
 	numberPicsShown_ = numberPicsShown
 	if cnt<numberPicsShown_:
 		numberPicsShown_ = cnt
@@ -185,7 +186,7 @@ def reRandomizeOrderLists():
 		for i in range(gridPlaces-xxx):
 			#print(str((gridPlaces)*ii+i)+"  "+str(ii)+"  "+str(i)+" :  "+str(randOrder[i]))
 			PosOrder_List_[(gridPlaces)*ii+i] = randOrder[i]
-		
+	
 	globals().update(PosOrder_List = PosOrder_List_)
 	globals().update(ImageOrder_List = random.sample(range(len(mylist)), numberPicsShown_))
 	print ("PosOrder_List: "+str(PosOrder_List)+str(len(PosOrder_List)))
@@ -295,13 +296,16 @@ def fadeOutAll():
 	print('')
 	print('')
 	
-	for i in reversed(range (int(254/4))):
-		pygame.mixer.music.set_volume(i/254)
+	cutoff = 54
+	
+	for i in reversed(range (int((254-cutoff)/4))):
+		pygame.mixer.music.set_volume((i*4+cutoff)/254)
 		screen.fill(BLACK)
-		bildAufbau(i*4)
+		bildAufbau(i*4+cutoff)
 		print(i)
 		pygame.display.flip()
 		time.sleep(fadeDelay)
+	bildAufbau(0)
 	pygame.mixer.music.stop()
 	pygame.mixer.music.set_volume(1)
 	
