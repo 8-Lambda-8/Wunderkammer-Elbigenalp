@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import pygame, sys, os
 import vlc, random
-import time, threading
+import time, threading, sched
 from datetime import datetime
 
 #init GPIO
@@ -391,7 +391,6 @@ def EndReached(event):
 #	print("StartWunderbox-EndReached")
 #	print(datetime.now())
 	
-
 events = playerTimelapse.event_manager()
 events.event_attach(vlc.EventType.MediaPlayerEndReached, EndReached)
 
@@ -415,6 +414,16 @@ except (KeyboardInterrupt, SystemExit):
 	GPIO.cleanup()
 	print('\nQuit\n')
 	pygame.quit()
+	
+startWunderboxSched = sched.scheduler(time.time, time.sleep)
+def startWunderboxSchedFunction(): 
+    print "restarting StartWunderbox"
+    StartWunderbox()
+    s.enter(60, 1, startWunderboxSchedFunction)
+	startWunderboxSched.run()
+
+startWunderboxSched.enter(60, 1, startWunderboxSchedFunction)
+startWunderboxSched.run()
 	
 #except Exception as e:
 #	print(e)
